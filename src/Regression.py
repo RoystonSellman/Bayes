@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 ##################################################################################
 # File: BayesRuleMatlabRegression.m
 # Demonstration code forBayes' Rule: A Tutorial Introduction to Bayesian Analysis
@@ -6,10 +7,14 @@
 # Copyright: 2012, JV Stone,  Sheffield University, Sheffield, England.
 # The Python code below is version 0.1. This code can be downloaded from http://jim-stone.staff.shef.ac.uk/BayesBook/Matlab.
 ##################################################################################
-
-from numpy import array, arange, linspace, random, ones, linalg, zeros, amin, amax, exp
+# imports
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+from numpy import arange, linspace, random, ones, linalg, zeros, amin, amax, exp
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 s=6 # set random number seed.
 #rand('seed',s);    randn('seed',s);
@@ -18,8 +23,6 @@ s=6 # set random number seed.
 # Define 10 salary values for horizontal axis.
 s = arange(1,12) # s = 1:1:11
 s = s.T # s=s';
-print s
-
 
 # Set true values of slope m and intercept c.
 m = 0.5
@@ -34,7 +37,7 @@ eta = random.randn(len(s)) * sds # eta = randn(size(s)).*sds;
 eta[7]=-1
 eta[8]=-3
 eta[10]=-3
-print eta
+
 # Find observed values of x (with noise added).
 x = m*s + c + eta
 
@@ -64,7 +67,8 @@ plt.xlim((0,12)) # set(gca,'XLim',[0 12],'FontName','Ariel');
 plt.ylim((0,9)) # set(gca,'YLim',[0 9],'FontName','Ariel');
 # Plot sd  from each data point
 for i in range(0,11):
-    x1 = x[i]-sds[i];  x2=x[i]+sds[i]
+    x1 = x[i]-sds[i]
+    x2=x[i]+sds[i]
     s1 = i+1
     s2 = i+1
     ss = (s1, s2)
@@ -72,30 +76,30 @@ for i in range(0,11):
     # hold on;
     plt.plot(ss,xx,'k', linewidth=2) #,'LineWidth',2) # hold off;
 plt.show()
-'''
+
 
 
 # Code for 2d plot
-m = mest2;
+m = mest2
 mmin = mest2-1 # 0.5
-mmax = mest2+1;
+mmax = mest2+1
 
-c = cest2;
+c = cest2
 cmin = cest2-1 #0.4
-cmax = cest2+1;
-minc = (mmax-mmin)/100;
-cinc = (cmax-cmin)/100;
-Fs = [];
-ms = linspace(mmin, minc, mmax);
-nm = len(ms);
-cs = linspace(cmin, cinc, cmax);
+cmax = cest2+1
+minc = (mmax-mmin)/100
+cinc = (cmax-cmin)/100
+Fs = []
+ms = linspace(mmin, minc, mmax)
+nm = len(ms)
+cs = linspace(cmin, cinc, cmax)
 nc = len(cs)
 
 Farray = zeros((nm,nc))
-for m1 in linspace(1, 1, nm): #= 1:nm
-    for c1 in linspace(1, 1, nc): # = 1:nc
-        mval=ms(m1)
-        cval=cs(c1)
+for m1 in linspace(0, 1, nm): #= 1:nm
+    for c1 in linspace(0, 1, nc): # = 1:nc
+        mval=ms[m1]
+        cval=cs[c1]
         y1 = mval*s + cval
         F1 = ((x-y1)/sds) ** 2
         Farray[m1,c1]=sum(F1)
@@ -104,6 +108,7 @@ for m1 in linspace(1, 1, nm): #= 1:nm
 plt.show()
 
 fig2=plt.figure()
+ax = fig2.gca(projection='3d')
 Z1 = Farray.T
 zmin = amin(Z1) # min(Z1(:));
 zmax = amax(Z1) # max(Z1(:));
@@ -112,9 +117,16 @@ v = linspace(zmin, zrange / 10, zmax) # =zmin:range/10:zmax;
 # Adjust spacing of contour lines.
 v = linspace(0 ,0.5, 8)
 v=exp(v)
-'''
-"""v=v*range/max(v);
-[X Y]=meshgrid(ms,cs);
+v=v*zrange/max(v);
+X, Y = np.meshgrid(ms,cs) #;[X Y]=meshgrid(ms,cs);
+surf = ax.contour(X, Y, Z1, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+#surf = ax.plot_surface(X, Y, Z1, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+ax.set_zlim(min(v), max(v))
+
+ax.zaxis.set_major_locator(LinearLocator(10))
+ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
+plt.show()
+"""
 contour(X,Y,Z1,v,'LineWidth',2);
 colormap([0 0 0]);
 set(gca,'Linewidth',2);   set(gca,'FontSize',20);
