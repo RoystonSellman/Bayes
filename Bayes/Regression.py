@@ -22,7 +22,7 @@ s=6 # set random number seed.
 # Make noisy data with slope m and intercept c.
 # Define 10 salary values for horizontal axis.
 s = arange(1,12)                        # s = 1:1:11
-s = s.T                                 # s=s';
+#s = s.reshape(11,1)                    # s=s';
 
 # Set true values of slope m and intercept c.
 m = 0.5
@@ -30,6 +30,7 @@ c = 3
 # Set standard deviation of each measured height.
 sds = 2*arange(1,12)/10.0 #sds = 2*[1:11]’/10; %rand(size(s))*2;
 sds = sds * arange(1,12)/10.0 #sds = sds .* [1:11]'/10;
+#sds = sds.reshape(11,1)
 
 # Use sds to make vector of noise.
 eta = random.randn(len(s)) * sds # eta = randn(size(s)).*sds;
@@ -46,26 +47,22 @@ x = m*s + c + eta
 vars0 = sds ** 2
 w=1/vars0 # w=1./vars0
 #w=ones(size(w)) # un-comment this line to get solution based on uniform noise terms.
-ss = np.array((ones(len(s)), s)) #ss=[ones(size(s)) s] # prepend column of ones so that solution includes intercept term.
-#ss = sm.add_constant(s) #ss=[ones(size(s)) s] # prepend column of ones so that solution includes intercept term.
-ss=ss.T
+ss = sm.add_constant(s) #ss=[ones(size(s)) s] # prepend column of ones so that solution includes intercept term.
 model = sm.WLS(ss, x, weights=w) #[params,stdx,mse,S] =lscov(ss,x,w)
 results = model.fit()
 mest2, cest2 = results.params[0]
+cest2 = cest2 + c # +c to compensate for apparent incorrect intercept returned from WLS
 ########
-xest2 = mest2 * s + cest2 + c #xest2 = mest2.*s + cest2;
+xest2 = mest2 * s + cest2 #xest2 = mest2.*s + cest2;
 c0 = cest2;
 m0 = mest2;
-
-print mest2
-print cest2
 
 # Plot fitted line xest (=xhat in text) and data points.
 fig1 = plt.figure() # ; clf;
 plt.plot(s,x, 'k*', s, xest2, 'k') #, 'LineWidth',2, 'MarkerSize',10)
 # set(gca,'Linewidth',2); set(gca,'FontSize',20);
-plt.xlabel('Salary, s (groats)');
-plt.ylabel('Height, x (feet)');
+plt.xlabel('Salary, ' + r'$s$' + ' (groats)'); # use trick to get italic font
+plt.ylabel('Height, ' + r'$x$' + ' (feet)');
 plt.xlim((0,12)) # set(gca,'XLim',[0 12],'FontName','Ariel');
 plt.ylim((0,9)) # set(gca,'YLim',[0 9],'FontName','Ariel');
 # Plot sd  from each data point
@@ -122,7 +119,9 @@ v = arange(0, 9 ,0.5)
 v=exp(v)
 v=v*zrange/max(v);
 X, Y = np.meshgrid(ms,cs) #;[X Y]=meshgrid(ms,cs);
-plt.contour(X, Y, Z1)
+plt.xlabel('Slope, ' + r'$m$') # use trick to get italic font
+plt.ylabel('Intercept, ' + r'$c$');
+plt.contour(X, Y, Z1, v)
 plt.show()
 
 fig3 = plt.figure()
@@ -130,8 +129,9 @@ ax = fig3.add_subplot(111, projection='3d')
 ax.set_xlim(-0.5, 1.5)
 ax.set_ylim(2,4)
 ax.set_zlim(min(v), max(v))
-ax.zaxis.set_major_locator(LinearLocator(10))
-ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
-#surf = ax.plot_surface(X, Y, Z1, rstride=1, cstride=1, cmap=cm.binary, linewidth=0, antialiased=False)
-surf = ax.plot_surface(X, Y, Z1, cmap=cm.binary, linewidth=0, antialiased=False)
+ax.autoscale(enable=True, axis='z')
+ax.set_xlabel(r'$m$') # use trick to get italic font
+ax.set_ylabel(r'$c$')
+ax.set_zlabel(r'$F$')
+surf = ax.plot_surface(X, Y, Z1, rstride=1, cstride=1, cmap=cm.coolwarm, linewidth=0, antialiased=True)
 plt.show()
