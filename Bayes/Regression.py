@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 
 ##################################################################################
-# File: BayesRuleMatlabRegression.m
+# File: Regression.py
 # Demonstration code forBayes' Rule: A Tutorial Introduction to Bayesian Analysis
-# JV Stone, 2012.
-# Copyright: 2012, JV Stone,  Sheffield University, Sheffield, England.
+# JV Stone, 2014.
+# Copyright: 2014, JV Stone,  Sheffield University, Sheffield, England.
 # The Python code below is version 0.1. This code can be downloaded from http://jim-stone.staff.shef.ac.uk/BayesBook/Matlab.
 ##################################################################################
 # imports
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
-from matplotlib.ticker import LinearLocator, FormatStrFormatter
-from numpy import arange, linspace, random, ones, linalg, zeros, amin, amax, exp
-import numpy as np
-import matplotlib.pyplot as plt
-import statsmodels.regression.linear_model as sm
+from numpy import arange, linspace, random, zeros, amin, amax, exp, meshgrid
+from matplotlib import pyplot as plt
+from statsmodels.regression import linear_model as sm
 
 s=6 # set random number seed.
                                         #   In MatLabversion: rand('seed',s);    randn('seed',s);
@@ -116,7 +114,7 @@ v = arange(zmin, zmax, zrange / 10)     #  In MatLabversion: min:range/10:zmax;
 v = arange(0, 9 ,0.5)
 v=exp(v)
 v=v*zrange/max(v);
-X, Y = np.meshgrid(ms,cs)               #  In MatLabversion: [X Y]=meshgrid(ms,cs);
+X, Y = meshgrid(ms,cs)               #  In MatLabversion: [X Y]=meshgrid(ms,cs);
 plt.xlabel('Slope, ' + r'$m$') # use trick to get italic font
 plt.ylabel('Intercept, ' + r'$c$');
 plt.contour(X, Y, Z1, v)
